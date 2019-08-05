@@ -62,10 +62,10 @@ public class GameController : MonoBehaviour
         _startPosPlayer = _playerTr.position;
         _startPosCam = _cameraTr.position;
        
-        Init();
+        SetData();
     }
 
-    private void Init()
+    private void SetData()
     {
         _poolObjList = new List<GameObject>();
         _poolObjUsedList = new List<GameObject>();
@@ -102,7 +102,7 @@ public class GameController : MonoBehaviour
         _playerRb.velocity = Vector3.zero;
         _playerRb.angularVelocity = Vector3.zero; 
        
-        Init();
+        SetData();
         StartGame();
     }
 
@@ -123,16 +123,17 @@ public class GameController : MonoBehaviour
         _isPoolCreated = true;
     }
 
-    private const float _firstWallPosZ = 25f;
-    private const float _indentationZ = 1.5f;
+    private const float FirstWallPosZ = 25f;
+    private const float IndentationZ = 1.5f;
     private void CreateObstacles()
     {
 
         for (var i = 0; i < _startLineCount; i++)
         {
+            
             var count = Random.Range(0, _poolObjList.Count);
             var obj = _poolObjList[count].gameObject;
-            var pos = new Vector3(0, 0, (_firstWallPosZ * _stage) + (i * _indentationZ));
+            var pos = new Vector3(0, 0, (FirstWallPosZ * _stage) + (i * IndentationZ));
                    
             obj.transform.position = pos;
             obj.SetActive(true);
@@ -148,30 +149,31 @@ public class GameController : MonoBehaviour
         
     }
 
-    private const float _nextScore = 5;
+    private const float NextWallCheckPoint = 5;
     private void FixedUpdate()
     {
-        if (Instance == null || Instance.gameState != GameState.Started) return;
 
-        var delta = Vector3.forward * _gameSpeed * Time.fixedDeltaTime;
-        
-        _playerRb.MovePosition(_playerTr.position + delta);
-        _cameraTr.position = _cameraTr.position + delta;
-        
-        // score 
-        score += Time.fixedDeltaTime * _gameSpeed;
-        var intScore = (int) score;
-        if (_scoreTxt != null)
+        if (Instance != null && Instance.gameState == GameState.Started)
         {
-            _scoreTxt.text = $"Score: {intScore}";
-        }
+            var delta = Vector3.forward * _gameSpeed * Time.fixedDeltaTime;
+        
+            _playerRb.MovePosition(_playerTr.position + delta);
+            _cameraTr.position = _cameraTr.position + delta;
+        
+            // score 
+            score += Time.fixedDeltaTime * _gameSpeed;
+            var intScore = (int) score;
+            if (_scoreTxt != null)
+            {
+                _scoreTxt.text = $"Score: {intScore}";
+            }
 
-        
-        if (intScore > 0 && intScore % (_nextScore * (_stage * _stage)) == 0 && _stage < _countStage)
-        {
-            _stage++;
-            score += 1f;
-            CreateObstacles();
+            if (intScore > 0 && intScore % (NextWallCheckPoint * (_stage * _stage)) == 0 && _stage < _countStage)
+            {
+                _stage++;
+                score += 1f;
+                CreateObstacles();
+            }
         }
 
     }

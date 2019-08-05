@@ -11,6 +11,7 @@ public class EnemyController : MonoBehaviour
     public void SetMaterials(List<Material> materialsList, int playerIndex)
     {
         var enemyCount = 0;
+        
         for (var i = 0; i < _objList.Count; i++)
         {
             var currentMaterialIndex = Random.Range(0, materialsList.Count);
@@ -26,6 +27,7 @@ public class EnemyController : MonoBehaviour
         if (enemyCount == _objList.Count)
         {
             var count = _objList.Count - 1;
+            
             _objRenderList[count].material = materialsList[playerIndex];
             _objList[count].tag = "Untagged";
         }
